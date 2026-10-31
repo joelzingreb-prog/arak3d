@@ -137,19 +137,23 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-    
-    if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
-    } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
+
+    // Nettoyage local du token, SANS redirection vers arak.base44.app
+    // (qui afficherait un popup 404 / erreur de domaine). On reste sur
+    // Cloudflare : retour simple vers l'accueil.
+    localStorage.removeItem('base44_access_token');
+    localStorage.removeItem('token');
+    try { base44.auth.setToken(null); } catch (e) { /* non bloquant */ }
+    if (shouldRedirect && typeof window !== 'undefined') {
+      window.location.href = '/';
     }
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    // Cloudflare : on reste TOUJOURS sur notre propre page /login (aucune
+    // redirection vers arak.base44.app, qui afficherait une erreur de domaine
+    // ou un popup 404). Interface inchangée — c'est la même page de login.
+    window.location.href = '/login';
   };
 
   return (

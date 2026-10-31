@@ -54,10 +54,10 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
         return;
       }
 
-      // Le compte Base44 n'utilise pas ce mot de passe → on ne peut PAS ouvrir
-      // Google ici (bloqué gratuitement par Base44 sur les domaines externes).
+      // Le compte Base44 n'utilise pas ce mot de passe. On reste 100 % sur
+      // Cloudflare : AUCUN popup, AUCUNE redirection vers base44.app.
       setError(true);
-      setHint("Mot de passe ≠ compte Base44. Ouvre https://arak.base44.app/login (Google y marche), connecte-toi une fois, puis mets l'email de ce compte dans le champ Email admin ci-dessous.");
+      setHint('Mot de passe correct, mais le compte Base44 utilis\u00e9 n\u2019a pas ce m\u00eame mot de passe. Saisis l\u2019email exact du compte admin (champ ci-dessus) dont le mot de passe est identique \u2014 la connexion se fera directement ici, sans popup.');
     } catch (err) {
       setError(true);
       setHint('Erreur réseau — réessaie.');

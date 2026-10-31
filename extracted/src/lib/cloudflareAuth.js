@@ -33,6 +33,41 @@ if (typeof window !== 'undefined') {
       return _open(url, name, features);
     };
   } catch (e) { /* non bloquant */ }
+
+  // Filet de sécurité TOTAL : le SDK Base44 (et l'app Base44 elle-même) ouvre
+  // une page de login sur arak.base44.app en POPUP classique (window.open sans
+  // nom "base44_auth"). Ce popup affiche alors un "404" — car la page /login
+  // n'existe pas quand on y arrive sans contexte. On intercepte donc TOUTES
+  // les ouvertures de popup vers base44.com / base44.app : elles ne peuvent
+  // plus s'afficher. Plus jamais de popup 404 ni de "Domain is not valid",
+  // quoi qu'il arrive dans le code ou le SDK.
+  try {
+    const NativeWindowOpen = window.open;
+    window.open = function (url) {
+      const u = String(url || '');
+      if (/base44\.(app|com)/.test(u)) return null;
+      return NativeWindowOpen.apply(window, arguments);
+    };
+    try {
+      const OriginalCreate = document.createElement.bind(document);
+      document.createElement = function (tag, opts) {
+        const el = OriginalCreate(tag, opts);
+        if (String(tag).toLowerCase() === 'iframe') {
+          try {
+            const srcDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src');
+            if (srcDesc && srcDesc.set) {
+              Object.defineProperty(el, 'src', {
+                configurable: true,
+                get() { return srcDesc.get.call(el); },
+                set(v) { if (/base44\.(app|com)/.test(String(v))) return; srcDesc.set.call(el, v); },
+              });
+            }
+          } catch (e) { /* non bloquant */ }
+        }
+        return el;
+      };
+    } catch (e) { /* non bloquant */ }
+  } catch (e) { /* non bloquant */ }
 }
 
 // Connexion Google : désactivée volontairement (impossible gratuitement
