@@ -1,0 +1,56 @@
+{
+  "name": "Pack",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom du pack"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description du pack"
+    },
+    "price": {
+      "type": "number",
+      "description": "Prix du pack en CHF"
+    },
+    "product_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs des produits inclus dans le pack"
+    },
+    "product_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Noms des produits inclus (snapshot)"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Image principale du pack"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Images suppl\u00e9mentaires du pack"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Afficher le pack dans le catalogue"
+    },
+    "payment_link": {
+      "type": "string",
+      "description": "Lien de paiement du pack"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ]
+}

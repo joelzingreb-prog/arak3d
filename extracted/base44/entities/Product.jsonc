@@ -1,0 +1,112 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom du produit"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description du produit"
+    },
+    "price": {
+      "type": "number",
+      "description": "Prix en CHF"
+    },
+    "material": {
+      "type": "string",
+      "description": "Mat\u00e9riau d'impression"
+    },
+    "print_time": {
+      "type": "string",
+      "description": "Temps d'impression estim\u00e9"
+    },
+    "dimensions": {
+      "type": "string",
+      "description": "Dimensions du produit"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL de l'image principale du produit"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs des images suppl\u00e9mentaires (max 7)"
+    },
+    "model_3d_url": {
+      "type": "string",
+      "description": "URL du mod\u00e8le 3D GLB pour la visualisation interactive"
+    },
+    "in_stock": {
+      "type": "boolean",
+      "default": true,
+      "description": "Disponibilit\u00e9 du produit"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0,
+      "description": "Ordre d'affichage"
+    },
+    "available_colors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Couleurs disponibles pour ce produit"
+    },
+    "payment_link": {
+      "type": "string",
+      "description": "Lien de paiement sp\u00e9cifique \u00e0 ce produit"
+    },
+    "badge_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "new",
+        "promo"
+      ],
+      "default": "none",
+      "description": "Type de badge affich\u00e9 sur la carte produit"
+    },
+    "promo_label": {
+      "type": "string",
+      "description": "Libell\u00e9 de la promotion (ex: -30%, 1+1 offert)"
+    },
+    "promo_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date/heure de d\u00e9but de la promotion"
+    },
+    "promo_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date/heure de fin de la promotion"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
