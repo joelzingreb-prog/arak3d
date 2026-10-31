@@ -56,3 +56,30 @@ sont automatiquement dirigés vers le backend Base44 quand il est configuré.
   `VITE_BASE44_APP_BASE_URL` est défini.
 - Test local : `npm install && npm run dev` (crée un `.env` avec les
   deux variables ci-dessus pour tester dans les mêmes conditions).
+
+## Connexion Google / panneau admin — à faire UNE fois sur Base44
+
+Le site tourne désormais 100 % sur Cloudflare, mais l'identité (comptes,
+rôles, données) reste sur le backend Base44 — c'est voulu et cela ne
+nécessite aucune modification du code du site. Pour que le bouton
+« Continue with Google » fonctionne depuis ton domaine Cloudflare :
+
+1. Ouvre https://base44.com → projet **arak** → **Settings → Authentication**
+   (ou « OAuth / Social login »).
+2. Dans la liste des **URLs autorisées / redirect URIs**, ajoute :
+   - `https://<ton-sous-domaine>.pages.dev`
+   - `https://www.<ton-domaine-personnalisé>.com` (si tu en as un)
+3. C'est tout. Le flux est déjà câblé côté code :
+   `/login` → Google → retour Base44 vers `<ton-site-cloudflare>/?access_token=…`
+   → le jeton est capturé par l'app, stocké en localStorage, puis nettoyé
+   de l'URL. Tu arrives connecté(e) sur la page d'accueil ; `/admin` est
+   alors accessible selon le rôle défini sur Base44.
+
+Remarques :
+- Les règles `public/_redirects` (SPA fallback) ne touchent pas les retours
+  OAuth : le `access_token` n'est jamais perdu.
+- Si une connexion échoue avec « redirect URI not allowed », c'est uniquement
+  l'étape 2 ci-dessus qui manque — aucune action nécessaire sur le code.
+- Aucune donnée n'est dupliquée : produits, commandes, réglages et comptes
+  administrateurs restent ceux de Base44, lus/écrits en direct par le site
+  hébergé sur Cloudflare.
