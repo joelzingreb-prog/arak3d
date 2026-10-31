@@ -1,6 +1,8 @@
 #env
 .env
-.env.*
+# .env.production est volontairement inclus : il ne contient que des valeurs
+# publiques (app id + URL backend Base44) nécessaires au build Cloudflare
+!.env.production
 
 # Logs
 /logs
@@ -27,6 +29,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
+# (.env.production est inclus volontairement, voir en haut du fichier)
 .vite
 base44/.app.jsonc

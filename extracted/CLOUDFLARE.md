@@ -1,5 +1,13 @@
 # Publier ce projet Base44 sur Cloudflare Pages
 
+> ✅ **Ce zip est déjà préconfiguré pour ARAK3D** : le fichier `.env.production`
+> contient l'App ID et l'URL du backend Base44 de ton app
+> (`https://arak.base44.app`). Un simple `npm run build` produit un `dist/`
+> branché sur tes vraies données — **aucune variable à ajouter dans Cloudflare,
+> rien à faire de plus**. (Si tu déploies via Git plutôt que via upload du zip,
+> ajoute quand même les deux variables `VITE_BASE44_APP_ID` /
+> `VITE_BASE44_APP_BASE_URL` dans Cloudflare, au cas où.)
+
 ## Pourquoi l'interface n'apparaissait pas
 
 Le code exporté de Base44 contient une étape de vérification au démarrage
