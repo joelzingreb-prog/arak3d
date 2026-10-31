@@ -1,12 +1,19 @@
-# Publier ce projet Base44 sur Cloudflare Pages
+# Publier ce projet Base44 sur Cloudflare Pages — 100 % GRATUIT
 
-> ✅ **Ce zip est déjà préconfiguré pour ARAK3D** : le fichier `.env.production`
-> contient l'App ID et l'URL du backend Base44 de ton app
-> (`https://arak.base44.app`). Un simple `npm run build` produit un `dist/`
-> branché sur tes vraies données — **aucune variable à ajouter dans Cloudflare,
-> rien à faire de plus**. (Si tu déploies via Git plutôt que via upload du zip,
-> ajoute quand même les deux variables `VITE_BASE44_APP_ID` /
-> `VITE_BASE44_APP_BASE_URL` dans Cloudflare, au cas où.)
+> 💸 **Coût total : 0 CHF/0 €.** Cloudflare Pages est gratuit (builds + trafic
+> illimités sur le plan Free). Le backend Base44 utilisé ici reste celui de
+> ton compte gratuit actuel — aucune option payante n'est nécessaire.
+
+> ✅ **Deux zips fournis :**
+> - `arak3d-final-dist.zip` → **le plus simple** : site déjà compilé. Sur
+>   Cloudflare Pages : *Create a project → Upload assets*, dézippe et glisse
+>   le contenu du dossier `dist/`. Aucun build, aucune variable, rien à taper.
+> - `arak3d-final-source.zip` → le code source, pour un déploiement Git ou si
+>   tu veux recompiler toi-même (`npm install && npm run build`).
+>
+> ✅ **Déjà préconfiguré pour ARAK3D** : l'App ID et l'URL du backend Base44
+> (`https://arak.base44.app`) sont compilés DANS le `dist/` livré et dans le
+> `.env.production` du source. **Aucune variable à ajouter dans Cloudflare.**
 
 ## Pourquoi l'interface n'apparaissait pas
 
@@ -57,12 +64,23 @@ sont automatiquement dirigés vers le backend Base44 quand il est configuré.
 - Test local : `npm install && npm run dev` (crée un `.env` avec les
   deux variables ci-dessus pour tester dans les mêmes conditions).
 
-## Connexion Google / panneau admin — à faire UNE fois sur Base44
+## Connexion Google / panneau admin — GRATUIT, zéro payant
 
 Le site tourne désormais 100 % sur Cloudflare, mais l'identité (comptes,
-rôles, données) reste sur le backend Base44 — c'est voulu et cela ne
-nécessite aucune modification du code du site. Pour que le bouton
-« Continue with Google » fonctionne depuis ton domaine Cloudflare :
+rôles, données) reste sur le backend Base44 gratuit actuel — c'est voulu et
+cela ne nécessite aucune modification du code ni aucun upgrade payant.
+
+### Option A — Email + mot de passe (recommandée, 100 % gratuite, rien à configurer)
+Dans `/login`, entre l'email et le mot de passe du compte admin tel qu'il
+existe déjà sur Base44. La connexion par mot de passe fonctionne depuis
+n'importe quel domaine (Cloudflare y compris), sans aucune configuration :
+le site appelle directement l'API d'authentification de ton backend gratuit.
+Tu es redirigé vers `/admin` selon le rôle du compte. C'est la voie la plus
+simple et elle ne dépend d'aucun réglage OAuth.
+
+### Option B — Bouton « Continue with Google » (gratuit aussi, 1 réglage une fois)
+Si tu préfères le bouton Google, il faut simplement autoriser ton domaine
+Cloudflare dans les redirections (réglage gratuit, dans ton plan actuel) :
 
 1. Ouvre https://base44.com → projet **arak** → **Settings → Authentication**
    (ou « OAuth / Social login »).
@@ -78,8 +96,10 @@ nécessite aucune modification du code du site. Pour que le bouton
 Remarques :
 - Les règles `public/_redirects` (SPA fallback) ne touchent pas les retours
   OAuth : le `access_token` n'est jamais perdu.
-- Si une connexion échoue avec « redirect URI not allowed », c'est uniquement
-  l'étape 2 ci-dessus qui manque — aucune action nécessaire sur le code.
+- Si une connexion Google échoue avec « redirect URI not allowed », utilise
+  l'Option A en attendant — aucune action nécessaire sur le code.
 - Aucune donnée n'est dupliquée : produits, commandes, réglages et comptes
-  administrateurs restent ceux de Base44, lus/écrits en direct par le site
-  hébergé sur Cloudflare.
+  administrateurs restent ceux de Base44 (plan gratuit), lus/écrits en direct
+  par le site hébergé sur Cloudflare (plan gratuit).
+- Commandes passées depuis le catalogue, acceptation/refus dans le panel
+  admin : tout passe par le même backend gratuit, rien à payer non plus.
