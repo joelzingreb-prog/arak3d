@@ -14,6 +14,7 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(false);
 
     if (password !== ADMIN_PASSWORD) {
       setLoading(false);
@@ -22,8 +23,22 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
       return;
     }
 
-    // Mot de passe correct → login Google automatique, retour sur /admin
-    googleLogin(base44, '/admin');
+    // Mot de passe correct → connexion directe au compte admin Base44
+    // (email + mot de passe, sans passer par Google : l'OAuth Google de
+    // Base44 refuse les domaines externes comme *.pages.dev avec
+    // "Domain is not valid", et le contournement était payant).
+    try {
+      const admins = await base44.entities.User.list('created_date', 100);
+      const admin = (admins || []).find(u => u && u.role === 'admin');
+      if (!admin || !admin.email) throw new Error('no-admin');
+      await base44.auth.loginViaEmailPassword(admin.email, ADMIN_PASSWORD);
+      onSuccess();
+    } catch (err) {
+      // Email/mot de passe ne correspond pas sur Base44 → repli :
+      // on ouvre la page de login officielle de l'app (Google y marche).
+      googleLogin(base44, '/admin');
+      setLoading(false);
+    }
   };
 
   return (

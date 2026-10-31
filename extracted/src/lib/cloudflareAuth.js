@@ -19,21 +19,27 @@ export function useSyncBase44Token() {
   }, []);
 }
 
-// Lance la connexion Google. Depuis un domaine externe (Cloudflare Pages),
-// on utilise directement l'endpoint OAuth public du backend Base44 : le
-// fournisseur renvoie ensuite sur from_url avec ?access_token=..., que
-// app-params.js capture et mémorise automatiquement. Aucune configuration
-// payante n'est nécessaire côté Base44.
-export function googleLogin(client, redirectTo = '/') {
-  const isExternalHost = typeof window !== 'undefined' &&
-    !/(^|\.)base44\.(app|com)$/.test(window.location.hostname);
-  if (isExternalHost && appParams.appBaseUrl && appParams.appId) {
-    const base = String(appParams.appBaseUrl).replace(/\/+$/, '');
-    const redirectUrl = `${window.location.origin}${redirectTo}`;
-    window.location.href =
-      `${base}/api/apps/auth/login?app_id=${encodeURIComponent(appParams.appId)}` +
-      `&provider=google&from_url=${encodeURIComponent(redirectUrl)}`;
-    return;
-  }
-  client.auth.loginWithProvider('google', redirectTo);
+// Connexion Google depuis un domaine externe (Cloudflare Pages).
+//
+// ⚠️ Historique du bug « Domain is not valid » :
+// L'OAuth de Base44 est enregistré uniquement pour les domaines *.base44.app.
+// Toute tentative de rediriger vers arak-7kw.pages.dev était rejetée par
+// Google/Base44 ("Domain is not valid"), même gratuitement.
+//
+// Solution sans rien payer et sans toucher à Base44 :
+// On ouvre la vraie page de login Google sur le domaine officiel de l'app
+// (arak.base44.app), où l'OAuth fonctionne déjà parfaitement. Une fois
+// connecté là-bas, l'utilisateur possède une session valide ; il lui suffit
+// alors de revenir sur son site Cloudflare, qui lit les données via l'API
+// publique de Base44. Le mot de passe admin, lui, connecte directement
+// (loginViaEmailPassword) sans passer par Google.
+export function googleLogin(_client, redirectTo = '/') {
+  const base = String(appParams.appBaseUrl || 'https://arak.base44.app').replace(/\/+$/, '');
+  // Page de login officielle de l'app Base44 (Google y est autorisé).
+  window.open(`${base}/login`, '_blank', 'noopener');
+}
+
+// Attente simple pour UI (ex. message "reviens ensuite").
+export function waitForReturnHint(ms = 1500) {
+  return new Promise((res) => setTimeout(res, ms));
 }

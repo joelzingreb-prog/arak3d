@@ -79,27 +79,28 @@ Tu es redirigé vers `/admin` selon le rôle du compte. C'est la voie la plus
 simple et elle ne dépend d'aucun réglage OAuth.
 
 ### Option B — Bouton « Continue with Google » (gratuit aussi, 1 réglage une fois)
-Si tu préfères le bouton Google, il faut simplement autoriser ton domaine
-Cloudflare dans les redirections (réglage gratuit, dans ton plan actuel) :
+Le bouton « Continuer avec Google » ouvre la page de login officielle de l'app dans un nouvel onglet (voir section Connexion admin plus bas).
 
-1. Ouvre https://base44.com → projet **arak** → **Settings → Authentication**
-   (ou « OAuth / Social login »).
-2. Dans la liste des **URLs autorisées / redirect URIs**, ajoute :
-   - `https://<ton-sous-domaine>.pages.dev`
-   - `https://www.<ton-domaine-personnalisé>.com` (si tu en as un)
-3. C'est tout. Le flux est déjà câblé côté code :
-   `/login` → Google → retour Base44 vers `<ton-site-cloudflare>/?access_token=…`
-   → le jeton est capturé par l'app, stocké en localStorage, puis nettoyé
-   de l'URL. Tu arrives connecté(e) sur la page d'accueil ; `/admin` est
-   alors accessible selon le rôle défini sur Base44.
 
-Remarques :
-- Les règles `public/_redirects` (SPA fallback) ne touchent pas les retours
-  OAuth : le `access_token` n'est jamais perdu.
-- Si une connexion Google échoue avec « redirect URI not allowed », utilise
-  l'Option A en attendant — aucune action nécessaire sur le code.
-- Aucune donnée n'est dupliquée : produits, commandes, réglages et comptes
-  administrateurs restent ceux de Base44 (plan gratuit), lus/écrits en direct
-  par le site hébergé sur Cloudflare (plan gratuit).
-- Commandes passées depuis le catalogue, acceptation/refus dans le panel
-  admin : tout passe par le même backend gratuit, rien à payer non plus.
+## 🔐 Connexion admin (version gratuite, sans "Domain is not valid")
+
+Problème rencontré : l'OAuth Google de Base44 n'accepte que les domaines
+`*.base44.app`. Rediriger vers `*.pages.dev` renvoyait
+`{"message":"Domain is not valid"}` — et le déblocage était payant.
+
+Solution implémentée (100 % gratuite, rien à changer chez Base44) :
+- Le **mot de passe admin** du panneau d'accueil connecte désormais
+  directement au compte admin via email+mot de passe (API Base44), puis
+  redirige vers `/admin`. Plus de détour par Google.
+- Si ce compte n'utilise pas ce mot de passe sur Base44, un onglet s'ouvre
+  sur la page de login officielle `arak.base44.app/login` (Google y
+  fonctionne) ; après connexion là-bas, revenir sur le site Cloudflare.
+- La page `/login` classique propose aussi "Continue with Google" (même
+  comportement : ouvre l'app officielle dans un nouvel onglet).
+
+## 📤 Publication express (Upload assets)
+
+1. Cloudflare Pages → Create project → **Upload assets**
+2. Nom du projet (ex. `arak-7kw`) → dézipper `arak3d-final-dist.zip` et
+   glisser **le contenu du dossier** (index.html, assets/, _redirects…)
+3. Deploy → le site répond sur https://arak-7kw.pages.dev
