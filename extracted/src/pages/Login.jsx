@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
+import { appParams } from "@/lib/app-params";
+import { googleLogin } from "@/lib/cloudflareAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -29,7 +31,9 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/");
+    // Connexion Google qui fonctionne depuis Cloudflare, sans rien configurer
+    // ni payer chez Base44 : on passe par l'endpoint OAuth public du backend.
+    googleLogin(base44, "/");
   };
 
   return (

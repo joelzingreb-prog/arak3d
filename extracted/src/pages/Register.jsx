@@ -8,6 +8,7 @@ import { UserPlus, Mail, Lock, Loader2 } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
+import { googleLogin } from "@/lib/cloudflareAuth";
 import { toast } from "@/components/ui/use-toast";
 
 export default function Register() {
@@ -67,7 +68,7 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", "/");
+    googleLogin(base44, "/");
   };
 
   if (showOtp) {

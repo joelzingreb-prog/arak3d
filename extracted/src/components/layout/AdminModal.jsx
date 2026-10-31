@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { googleLogin } from '@/lib/cloudflareAuth';
 
 const ADMIN_PASSWORD = '@48#57a@rak!';
 
@@ -22,7 +23,7 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
     }
 
     // Mot de passe correct → login Google automatique, retour sur /admin
-    base44.auth.loginWithProvider('google', '/admin');
+    googleLogin(base44, '/admin');
   };
 
   return (

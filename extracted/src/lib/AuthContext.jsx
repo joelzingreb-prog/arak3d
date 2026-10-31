@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
+import { useSyncBase44Token } from '@/lib/cloudflareAuth';
 
 const AuthContext = createContext();
 
@@ -26,6 +27,8 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+
+  useSyncBase44Token();
 
   useEffect(() => {
     checkAppState();
