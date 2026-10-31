@@ -1,0 +1,79 @@
+{
+  "name": "Poll",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titre du sondage"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description / contexte du sondage"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Sondage ouvert aux votes"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de cl\u00f4ture du vote"
+    },
+    "limited_edition_note": {
+      "type": "string",
+      "description": "Pr\u00e9cision sur la dur\u00e9e de disponibilit\u00e9 si \u00e9lu (ex: disponible 1 mois seulement)"
+    },
+    "options": {
+      "type": "array",
+      "description": "Liste des produits candidats",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "price_estimate": {
+            "type": "string"
+          },
+          "material": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "model_3d_url": {
+            "type": "string"
+          },
+          "votes": {
+            "type": "number",
+            "default": 0
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {},
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

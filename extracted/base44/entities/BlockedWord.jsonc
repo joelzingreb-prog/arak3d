@@ -1,0 +1,13 @@
+{
+  "name": "BlockedWord",
+  "type": "object",
+  "properties": {
+    "word": {
+      "type": "string",
+      "description": "Mot ou expression \u00e0 bloquer dans les commentaires"
+    }
+  },
+  "required": [
+    "word"
+  ]
+}

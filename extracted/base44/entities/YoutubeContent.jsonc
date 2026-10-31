@@ -1,0 +1,37 @@
+{
+  "name": "YoutubeContent",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "video",
+        "short"
+      ],
+      "description": "Type de contenu : vid\u00e9o classique ou short"
+    },
+    "title": {
+      "type": "string",
+      "description": "Titre du contenu"
+    },
+    "youtube_url": {
+      "type": "string",
+      "description": "URL YouTube de la vid\u00e9o ou du short"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0,
+      "description": "Ordre d'affichage"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Afficher ce contenu sur la page"
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "youtube_url"
+  ]
+}

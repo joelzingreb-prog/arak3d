@@ -1,0 +1,83 @@
+{
+  "name": "CustomRequest",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string",
+      "description": "Nom du client"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Email du client"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Sujet / titre de la demande"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description d\u00e9taill\u00e9e de la demande personnalis\u00e9e"
+    },
+    "dimensions": {
+      "type": "string",
+      "description": "Dimensions souhait\u00e9es"
+    },
+    "material": {
+      "type": "string",
+      "description": "Mat\u00e9riau souhait\u00e9"
+    },
+    "color": {
+      "type": "string",
+      "description": "Couleur souhait\u00e9e"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "Quantit\u00e9 souhait\u00e9e"
+    },
+    "budget": {
+      "type": "string",
+      "description": "Budget approximatif"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "printing",
+        "delivering",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Statut de la demande"
+    },
+    "admin_note": {
+      "type": "string",
+      "description": "Note interne de l'admin"
+    },
+    "client_code": {
+      "type": "string",
+      "description": "Code client unique pour suivi"
+    }
+  },
+  "required": [
+    "customer_name",
+    "customer_email",
+    "subject",
+    "description"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

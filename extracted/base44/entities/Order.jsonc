@@ -1,0 +1,83 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "ID du produit command\u00e9"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Nom du produit (snapshot)"
+    },
+    "product_price": {
+      "type": "number",
+      "description": "Prix au moment de la commande"
+    },
+    "customer_name": {
+      "type": "string",
+      "description": "Nom du client"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Email du client"
+    },
+    "customer_message": {
+      "type": "string",
+      "description": "Message ou note du client"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "printing",
+        "delivering",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Statut de la commande"
+    },
+    "client_code": {
+      "type": "string",
+      "description": "Code client unique \u00e0 usage unique pour suivi de commande"
+    },
+    "payment_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Le client a cliqu\u00e9 sur le lien de paiement"
+    }
+  },
+  "required": [
+    "product_id",
+    "product_name",
+    "product_price",
+    "customer_name",
+    "customer_email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.customer_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
