@@ -21,7 +21,7 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      // Connexion directe via l'API publique Base44 (email + mot de passe).
+      // Connexion 100 % locale sur Cloudflare (email + mot de passe admin).
       // On n'utilise PAS le flux OAuth du SDK qui ouvre une popup Google —
       // cette popup échoue sur les domaines externes ("Domain is not valid").
       const result = await directLogin(email, password);
