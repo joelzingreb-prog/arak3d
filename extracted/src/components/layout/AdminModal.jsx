@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { googleLogin } from '@/lib/cloudflareAuth';
+import { directLogin, fetchAdminEmails } from '@/lib/cloudflareAuth';
 
 const ADMIN_PASSWORD = '@48#57a@rak!';
 
 export default function AdminModal({ isOpen, onClose, onSuccess }) {
   const [password, setPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState(localStorage.getItem('arak_admin_email') || '');
   const [error, setError] = useState(false);
+  const [hint, setHint] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -23,20 +24,44 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
       return;
     }
 
-    // Mot de passe correct → connexion directe au compte admin Base44
-    // (email + mot de passe, sans passer par Google : l'OAuth Google de
-    // Base44 refuse les domaines externes comme *.pages.dev avec
-    // "Domain is not valid", et le contournement était payant).
+    // Mot de passe correct → connexion 100 % directe, SAIN popup Google.
     try {
-      const admins = await base44.entities.User.list('created_date', 100);
-      const admin = (admins || []).find(u => u && u.role === 'admin');
-      if (!admin || !admin.email) throw new Error('no-admin');
-      await base44.auth.loginViaEmailPassword(admin.email, ADMIN_PASSWORD);
-      onSuccess();
+      const candidates = [];
+      if (adminEmail.trim()) candidates.push(adminEmail.trim());
+      const savedEmail =
+        localStorage.getItem('arak_admin_email') ||
+        localStorage.getItem('arak_last_email') ||
+        '';
+      if (savedEmail && !candidates.includes(savedEmail)) candidates.push(savedEmail);
+      try {
+        const emails = await fetchAdminEmails();
+        for (const e of emails) if (!candidates.includes(e)) candidates.push(e);
+      } catch (e) { /* best-effort */ }
+      if (candidates.length === 0) candidates.push('admin@arak3d.ch');
+
+      let result = null;
+      for (const email of candidates) {
+        result = await directLogin(email, ADMIN_PASSWORD);
+        if (result) { localStorage.setItem('arak_admin_email', email); break; }
+      }
+
+      if (result && result.user && String(result.user.role || '').toLowerCase() !== 'admin') {
+        // connecté mais pas admin : on tente quand même /admin (protégé par AuthContext)
+      }
+
+      if (result) {
+        onSuccess();
+        return;
+      }
+
+      // Le compte Base44 n'utilise pas ce mot de passe → on ne peut PAS ouvrir
+      // Google ici (bloqué gratuitement par Base44 sur les domaines externes).
+      setError(true);
+      setHint("Mot de passe ≠ compte Base44. Ouvre https://arak.base44.app/login (Google y marche), connecte-toi une fois, puis mets l'email de ce compte dans le champ Email admin ci-dessous.");
     } catch (err) {
-      // Email/mot de passe ne correspond pas sur Base44 → repli :
-      // on ouvre la page de login officielle de l'app (Google y marche).
-      googleLogin(base44, '/admin');
+      setError(true);
+      setHint('Erreur réseau — réessaie.');
+    } finally {
       setLoading(false);
     }
   };
@@ -75,6 +100,18 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
               </div>
 
               <div className="space-y-1">
+                <p className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">Email admin (optionnel)</p>
+                <input
+                  type="email"
+                  value={adminEmail}
+                  onChange={e => setAdminEmail(e.target.value)}
+                  className="w-full bg-transparent border-b-2 border-border focus:border-primary font-mono text-sm py-2 outline-none transition-colors text-foreground placeholder:text-muted-foreground/30"
+                  placeholder="admin@arak3d.ch"
+                  autoComplete="email"
+                />
+              </div>
+
+              <div className="space-y-1">
                 <p className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase">Mot de passe</p>
                 <input
                   type="password"
@@ -95,6 +132,12 @@ export default function AdminModal({ isOpen, onClose, onSuccess }) {
                 >
                   ACCESS_DENIED
                 </motion.p>
+              )}
+
+              {hint && (
+                <p className="text-muted-foreground font-mono text-[10px] text-center leading-relaxed">
+                  {hint}
+                </p>
               )}
 
               <button

@@ -8,10 +8,10 @@ import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { appParams } from "@/lib/app-params";
-import { googleLogin } from "@/lib/cloudflareAuth";
+import { googleLogin, directLogin } from "@/lib/cloudflareAuth";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(localStorage.getItem('arak_last_email') || "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,15 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      // Connexion directe via l'API publique Base44 (email + mot de passe).
+      // On n'utilise PAS le flux OAuth du SDK qui ouvre une popup Google —
+      // cette popup échoue sur les domaines externes ("Domain is not valid").
+      const result = await directLogin(email, password);
+      if (!result) {
+        setError("Invalid email or password");
+        return;
+      }
+      localStorage.setItem('arak_last_email', email);
       window.location.href = "/";
     } catch (err) {
       setError(err.message || "Invalid email or password");
